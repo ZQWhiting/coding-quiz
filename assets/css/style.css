@@ -1,0 +1,115 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+}
+
+.content-holder {
+    display: flex;
+    flex: 0 50%;
+    /* text-align: center; */
+    flex-wrap: wrap;
+}
+
+.hs-btn {
+    background: none!important;
+    border: none;
+    padding: 0;
+    color: violet;
+    margin: 15px 10px 25px;
+}
+
+.h-default-text {
+    margin: 15px 10px 25px;
+}
+
+.answer-container {
+    flex: 0 100%;
+}
+
+.btn-container {
+    margin: 5px;
+    margin-left: 0px;
+}
+
+.btn {
+    background-color: #351C75;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    border-radius: 5px;
+    margin: 0px 15px;
+    margin-left: 0px;
+}
+
+.default-text {
+    margin: 15px 0px 25px;
+    flex: 0 100%;
+}
+
+.bold-text {
+    font-weight: 700;
+    font-size: 32px;
+    margin-bottom: 15px;
+    flex: 0 100%;
+}
+
+.torf-text {
+    border-top: solid 1px grey;
+    color: grey;
+    padding: 7px 15px;
+    font-size: 28px;
+    font-style: italic;
+    margin-top: 30px;
+    flex: 0 100%;
+}
+
+.hs {
+    display: flex;
+    flex: 0 100%;
+    flex-wrap: wrap;
+}
+
+.hs-text {
+    display: flex;
+    flex: 1 100%;
+    font-size: 28px;
+    line-height: 1.5;
+    flex-wrap: wrap;
+}
+
+.hs-form {
+    flex: 1 30%;
+    margin: 0px 10px;
+    padding: 5px;
+    display: flex;
+}
+
+.hs-form input {
+    flex: 0 20%;
+    justify-content: space-evenly;
+    margin: 0px 5px;
+}
+
+.hs-container {
+    background-color: lightgrey;
+    background-size: cover;
+    flex: 1 100%;
+    padding: 5px;
+}
+
+span {
+    border-bottom: 2px solid black;
+    flex: 0 10%;
+}
