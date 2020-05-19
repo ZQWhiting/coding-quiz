@@ -113,3 +113,7 @@ span {
     border-bottom: 2px solid black;
     flex: 0 10%;
 }
+
+.btn:hover {
+    background-color: violet;
+}
