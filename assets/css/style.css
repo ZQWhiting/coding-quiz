@@ -18,12 +18,12 @@ main {
 .content-holder {
     display: flex;
     flex: 0 50%;
-    /* text-align: center; */
+    text-align: center;
     flex-wrap: wrap;
 }
 
-.hs-btn {
-    background: none!important;
+.h-btn {
+    background: none;
     border: none;
     padding: 0;
     color: violet;
@@ -49,8 +49,7 @@ main {
     border: none;
     padding: 7px 15px;
     border-radius: 5px;
-    margin: 0px 15px;
-    margin-left: 0px;
+    margin-right: 15px;
 }
 
 .default-text {
@@ -75,7 +74,7 @@ main {
     flex: 0 100%;
 }
 
-.hs {
+.hs-content {
     display: flex;
     flex: 0 100%;
     flex-wrap: wrap;
