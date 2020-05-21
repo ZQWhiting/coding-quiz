@@ -20,6 +20,7 @@ main {
     flex: 0 50%;
     text-align: center;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .h-btn {
@@ -49,7 +50,7 @@ main {
     border: none;
     padding: 7px 15px;
     border-radius: 5px;
-    margin-right: 15px;
+    /* margin-right: 15px; */
 }
 
 .default-text {
@@ -61,7 +62,7 @@ main {
     font-weight: 700;
     font-size: 32px;
     margin-bottom: 15px;
-    flex: 0 100%;
+    display: flex;
 }
 
 .torf-text {
