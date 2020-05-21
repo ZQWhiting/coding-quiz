@@ -14,6 +14,7 @@
 
 // Variables
 var timeCounter = 0;
+var questionCounter = 0;
 var timeKeeper = document.getElementById("time-keeper");
 var contentHolderEl = document.querySelector(".content-holder");
 var span = document.createElement("span");
@@ -27,55 +28,66 @@ function test(test) {
 var questionArray = [
     {
         question: "Commonly used data types Do NOT include:",
-        answer1: "Strings",
-        answer2: "Booleans",
-        answer3: "Alerts",
-        answer4: "Numbers",
-        trueAnswer: "Alerts",
+        answerArray: [
+            "Strings",
+            "Booleans",
+            "Alerts",
+            "Numbers",
+        ],
+        correctAnswer: "Alerts"
     },
     {
-        question: "The condition in an if / else statement is enclosed with <span></span>.",
-        answer1: "Quotes",
-        answer2: "Curly brackets",
-        answer3: "Parenthesis",
-        answer4: "Square brackets",
-        trueAnswer: "Parenthesis",
+        question: "The condition in an if / else statement is enclosed with <span>___________________</span>.",
+        answerArray: [
+            "Quotes",
+            "Curly brackets",
+            "Parenthesis",
+            "Square brackets"
+        ],
+        correctAnswer: "Parenthesis"
     },
     {
-        question: "Arrays in javascript can be used to store <span></span>.",
-        answer1: "Numbers and strings",
-        answer2: "Other arrays",
-        answer3: "Booleans",
-        answer4: "All of the above",
-        trueAnswer: "All of the above",
+        question: "Arrays in javascript can be used to store <span>___________________</span>.",
+        answerArray: [
+            "Numbers and strings",
+            "Other arrays",
+            "Booleans",
+            "All of the above",
+        ],
+        correctAnswer: "All of the above"
     },
     {
-        question: "String values must be enclosed within <span></span> when being assigned to variables",
-        answer1: "Curly brackets",
-        answer2: "Quotes",
-        answer3: "Commas",
-        answer4: "Parenthesis",
-        trueAnswer: "Quotes",
+        question: "String values must be enclosed within <span>___________________</span> when being assigned to variables",
+        answerArray: [
+            "Curly brackets",
+            "Quotes",
+            "Commas",
+            "Parenthesis",
+        ],
+        correctAnswer: "Quotes"
     },
     {
         question: "A very useful tool used during development and debugging for printing content to the debugger is:",
-        answer1: "For loops",
-        answer2: "JavaScript",
-        answer3: "Terminal/bash",
-        answer4: "Console.log",
-        trueAnswer: "Console.log",
+        answerArray: [
+            "For loops",
+            "JavaScript",
+            "Terminal/bash",
+            "Console.log",
+        ],
+        correctAnswer: "Console.log"
     },
 ];
 
 var keepTime = function () {
     timeCounter = 75;
     timeKeeper.textContent = "Time: " + timeCounter;
-    var countDown = setInterval(function() {
+    var countDown = setInterval(function () {
         timeCounter--;
         timeKeeper.textContent = "Time: " + timeCounter;
         if (timeCounter === 0) {
             clearInterval(countDown);
             return timeCounter;
+            //ENDGAME
         }
     }, 1000);
 }
@@ -105,9 +117,57 @@ var loadGame = function () {
 var quiz = function () {
     keepTime();
     contentHolderEl.removeAttribute("id");
-    for (var i = 0; i < questionArray.length; i++) {
-        contentHolderEl.innerHTML = "";
-    };
+        newQuestion();
 };
+
+var newQuestion = function () {
+    var i = questionCounter;
+    contentHolderEl.innerHTML = "";
+
+    var questionEL = document.createElement("div");
+    questionEL.innerHTML = questionArray[i].question;
+    questionEL.className = "bold-text";
+    contentHolderEl.appendChild(questionEL);
+
+    var answerContainerEl = document.createElement("div");
+    answerContainerEl.className = "answer-container"
+    contentHolderEl.appendChild(answerContainerEl);
+
+    var btnGrid = document.createElement("div");
+    btnGrid.className = "btn-grid";
+    contentHolderEl.appendChild(btnGrid);
+
+    for (let x = 0; x < questionArray[i].answerArray.length; x++) {
+        var answerBtn = document.createElement("button");
+        answerBtn.className = "btn";
+        answerBtn.setAttribute("value", questionArray[i].answerArray[x]);
+        answerBtn.textContent = questionArray[i].answerArray[x];
+        btnGrid.appendChild(answerBtn);
+    }
+    btnGrid.addEventListener("click", checkAnswer);
+
+
+};
+
+var checkAnswer = function (event) {
+    var i = questionCounter;
+    if (event.target.closest(".btn") && event.target.getAttribute("value") === questionArray[i].correctAnswer) {
+        var correct = document.createElement("div");
+        correct.className = "torf-text";
+        correct.textContent = "Correct!"
+        contentHolderEl.appendChild(correct);
+    }
+    else {
+        var wrong = document.createElement("div");
+        wrong.className = "torf-text";
+        wrong.textContent = "Wrong!"
+        contentHolderEl.appendChild(wrong);
+        timeCounter = timeCounter - 10;
+    };
+    questionCounter++;
+    if (questionCounter <= questionArray.length) {
+        newQuestion();
+    }
+}
 
 loadGame();
