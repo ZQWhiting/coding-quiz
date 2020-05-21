@@ -67,6 +67,19 @@ var questionArray = [
     },
 ];
 
+var keepTime = function () {
+    timeCounter = 75;
+    timeKeeper.textContent = "Time: " + timeCounter;
+    var countDown = setInterval(function() {
+        timeCounter--;
+        timeKeeper.textContent = "Time: " + timeCounter;
+        if (timeCounter === 0) {
+            clearInterval(countDown);
+            return timeCounter;
+        }
+    }, 1000);
+}
+
 // Load Game
 var loadGame = function () {
     timeKeeper.textContent = "Time: " + timeCounter;
@@ -90,8 +103,10 @@ var loadGame = function () {
 };
 
 var quiz = function () {
-    for (var i = 0; i < array.length; i++) {
-
+    keepTime();
+    contentHolderEl.removeAttribute("id");
+    for (var i = 0; i < questionArray.length; i++) {
+        contentHolderEl.innerHTML = "";
     };
 };
 

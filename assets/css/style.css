@@ -18,8 +18,11 @@ main {
 .content-holder {
     display: flex;
     flex: 0 50%;
-    text-align: center;
     flex-wrap: wrap;
+}
+
+#center {
+    text-align: center;
     justify-content: center;
 }
 
