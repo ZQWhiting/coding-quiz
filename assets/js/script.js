@@ -77,16 +77,18 @@ var questionArray = [
     },
 ];
 
+var highScoreArray = [];
+
 var keepTime = function () {
-    timeCounter = 75;
+    timeCounter = 10;
     timeKeeper.textContent = "Time: " + timeCounter;
     var countDown = setInterval(function () {
         timeCounter--;
         timeKeeper.textContent = "Time: " + timeCounter;
-        if (timeCounter === 0) {
+        if (timeCounter <= 0) {
             clearInterval(countDown);
-            return timeCounter;
-            //ENDGAME
+            timeCounter = 0;
+            endGame();
         }
     }, 1000);
 }
@@ -94,6 +96,8 @@ var keepTime = function () {
 // Load Game
 var loadGame = function () {
     timeKeeper.textContent = "Time: " + timeCounter;
+
+    contentHolderEl.id = "center"
 
     var titleEl = document.createElement("div");
     titleEl.className = "bold-text";
@@ -158,7 +162,7 @@ var checkAnswer = function (event) {
             newQuestion();
         }
         else {
-            //EndGame
+            endGame();
         }
         contentHolderEl.appendChild(correct);
     }
@@ -167,15 +171,91 @@ var checkAnswer = function (event) {
         wrong.className = "torf-text";
         wrong.textContent = "Wrong!"
         timeCounter = timeCounter - 10;
+        timeKeeper.textContent = "Time: " + timeCounter;
         questionCounter++;
         if (questionCounter < questionArray.length) {
             newQuestion();
         }
         else {
-            //EndGame
+            endGame();
         }
         contentHolderEl.appendChild(wrong);
     };
+}
+
+var endGame = function () {
+    contentHolderEl.innerHTML = ""
+
+    var doneEl = document.createElement("div");
+    doneEl.className = "bold-text";
+    doneEl.textContent = "Coding Quiz Challenge";
+    contentHolderEl.appendChild(doneEl);
+
+    var scoreTextEl = document.createElement("div");
+    scoreTextEl.className = "hs-text";
+    scoreTextEl.textContent = "Your final score is " + timeCounter + ".";
+    contentHolderEl.appendChild(scoreTextEl);
+
+    var scoreTextEl = document.createElement("div");
+    scoreTextEl.className = "hs-text";
+    scoreTextEl.textContent = "Enter initials: ";
+    contentHolderEl.appendChild(scoreTextEl);
+
+    var formEl = document.createElement("form");
+    formEl.className = "hs-form";
+    scoreTextEl.appendChild(formEl);
+
+    var inputTextEl = document.createElement("input");
+    inputTextEl.type = "text";
+    inputTextEl.name = "task-name";
+    formEl.appendChild(inputTextEl);
+
+    var inputSubmitEl = document.createElement("input");
+    inputSubmitEl.type = "submit";
+    inputSubmitEl.className = "btn";
+    inputSubmitEl.setAttribute("value", "Submit");
+    formEl.appendChild(inputSubmitEl);
+
+    formEl.addEventListener("submit", saveScore);
+}
+
+var saveScore = function (event) {
+    event.preventDefault();
+    var nameInput = document.querySelector("input[name='task-name']").value;
+
+    if (!nameInput) {
+        endGame();
+    }
+    var score = nameInput + " - " + timeCounter;
+    highScoreArray.push(score);
+    localStorage.setItem("highscores", JSON.stringify(highScoreArray));
+
+    highScores();
+}
+
+var highScores = function () {
+    contentHolderEl.innerHTML = "";
+
+    var scorePageText = document.createElement("div");
+    scorePageText.className = "bold-text";
+    scorePageText.textContent = "High scores"
+    contentHolderEl.appendChild(scorePageText);
+
+    var highScoreListEl = document.createElement("div");
+    highScoreListEl.className = "hs-container";
+    contentHolderEl.appendChild(highScoreListEl);
+
+    var savedHighScores = localStorage.getItem("highscores");
+    savedHighScores = savedHighScores || "";
+    savedHighScores = JSON.parse(savedHighScores);
+
+
+    for (let hs = 0; hs < savedHighScores.length; hs++) {
+        var highScoreEl = document.createElement("div");
+        highScoreEl.innerHTML = (hs + 1) + ". " + savedHighScores[hs];
+        highScoreListEl.appendChild(highScoreEl);
+    }
+    test(savedHighScores);
 }
 
 loadGame();
