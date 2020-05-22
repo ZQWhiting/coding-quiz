@@ -17,7 +17,6 @@ var timeCounter = 0;
 var questionCounter = 0;
 var timeKeeper = document.getElementById("time-keeper");
 var contentHolderEl = document.querySelector(".content-holder");
-var span = document.createElement("span");
 
 // Console.log test
 function test(test) {
@@ -109,15 +108,14 @@ var loadGame = function () {
     var startButtonEl = document.createElement("button");
     startButtonEl.className = "btn";
     startButtonEl.textContent = "Start Quiz";
-    startButtonEl.id = "start-game";
-    contentHolderEl.appendChild(startButtonEl);
     startButtonEl.addEventListener("click", quiz);
+    contentHolderEl.appendChild(startButtonEl);
 };
 
 var quiz = function () {
     keepTime();
     contentHolderEl.removeAttribute("id");
-        newQuestion();
+    newQuestion();
 };
 
 var newQuestion = function () {
@@ -155,19 +153,29 @@ var checkAnswer = function (event) {
         var correct = document.createElement("div");
         correct.className = "torf-text";
         correct.textContent = "Correct!"
+        questionCounter++;
+        if (questionCounter < questionArray.length) {
+            newQuestion();
+        }
+        else {
+            //EndGame
+        }
         contentHolderEl.appendChild(correct);
     }
     else {
         var wrong = document.createElement("div");
         wrong.className = "torf-text";
         wrong.textContent = "Wrong!"
-        contentHolderEl.appendChild(wrong);
         timeCounter = timeCounter - 10;
+        questionCounter++;
+        if (questionCounter < questionArray.length) {
+            newQuestion();
+        }
+        else {
+            //EndGame
+        }
+        contentHolderEl.appendChild(wrong);
     };
-    questionCounter++;
-    if (questionCounter <= questionArray.length) {
-        newQuestion();
-    }
 }
 
 loadGame();
