@@ -17,6 +17,7 @@ var timeCounter = 0;
 var questionCounter = 0;
 var timeKeeper = document.getElementById("time-keeper");
 var contentHolderEl = document.querySelector(".content-holder");
+var highScoreLinkEl = document.querySelector(".h-btn");
 
 // Console.log test
 function test(test) {
@@ -77,10 +78,8 @@ var questionArray = [
     },
 ];
 
-var highScoreArray = [];
-
 var keepTime = function () {
-    timeCounter = 10;
+    timeCounter = 75;
     timeKeeper.textContent = "Time: " + timeCounter;
     var countDown = setInterval(function () {
         timeCounter--;
@@ -90,11 +89,17 @@ var keepTime = function () {
             timeCounter = 0;
             endGame();
         }
+        else if (document.querySelector("form") || document.querySelector(".hs-container")) {
+            clearInterval(countDown);
+            timeCounter++
+            timeKeeper.textContent = "Time: " + timeCounter;
+        }
     }, 1000);
 }
 
 // Load Game
 var loadGame = function () {
+    contentHolderEl.innerHTML = "";
     timeKeeper.textContent = "Time: " + timeCounter;
 
     contentHolderEl.id = "center"
@@ -119,6 +124,7 @@ var loadGame = function () {
 var quiz = function () {
     keepTime();
     contentHolderEl.removeAttribute("id");
+    questionCounter = 0;
     newQuestion();
 };
 
@@ -136,7 +142,7 @@ var newQuestion = function () {
     contentHolderEl.appendChild(answerContainerEl);
 
     var btnGrid = document.createElement("div");
-    btnGrid.className = "btn-grid";
+    btnGrid.className = "btn-grid-1";
     contentHolderEl.appendChild(btnGrid);
 
     for (let x = 0; x < questionArray[i].answerArray.length; x++) {
@@ -221,20 +227,33 @@ var endGame = function () {
 
 var saveScore = function (event) {
     event.preventDefault();
+
     var nameInput = document.querySelector("input[name='task-name']").value;
 
     if (!nameInput) {
         endGame();
     }
-    var score = nameInput + " - " + timeCounter;
-    highScoreArray.push(score);
-    localStorage.setItem("highscores", JSON.stringify(highScoreArray));
 
+    var savedScores = localStorage.getItem("highscores");
+    savedScores = JSON.parse(savedScores) || [];
+
+    var newScore = {
+        name: nameInput,
+        score: timeCounter
+    };
+
+    savedScores.push(newScore);
+    savedScores.sort(function compareNumbers(a, b) {
+        return b.score - a.score;
+    });
+
+    localStorage.setItem("highscores", JSON.stringify(savedScores));
     highScores();
 }
 
 var highScores = function () {
     contentHolderEl.innerHTML = "";
+    contentHolderEl.removeAttribute("id");
 
     var scorePageText = document.createElement("div");
     scorePageText.className = "bold-text";
@@ -245,17 +264,44 @@ var highScores = function () {
     highScoreListEl.className = "hs-container";
     contentHolderEl.appendChild(highScoreListEl);
 
-    var savedHighScores = localStorage.getItem("highscores");
-    savedHighScores = savedHighScores || "";
-    savedHighScores = JSON.parse(savedHighScores);
+    var savedScores = localStorage.getItem("highscores");
+    savedScores = JSON.parse(savedScores);
+    savedScores = savedScores || "No high scores yet!";
 
-
-    for (let hs = 0; hs < savedHighScores.length; hs++) {
-        var highScoreEl = document.createElement("div");
-        highScoreEl.innerHTML = (hs + 1) + ". " + savedHighScores[hs];
-        highScoreListEl.appendChild(highScoreEl);
+    if (!(savedScores === "No high scores yet!")) {
+        for (let i = 0; i < savedScores.length; i++) {
+            var highScoreEl = document.createElement("div");
+            highScoreEl.innerHTML = (i + 1) + ". " + savedScores[i].name + " - " + savedScores[i].score;
+            highScoreListEl.appendChild(highScoreEl);
+        }
     }
-    test(savedHighScores);
+    else {
+        var highScoreEl = document.createElement("div");
+            highScoreEl.innerHTML = savedScores;
+            highScoreListEl.appendChild(highScoreEl);
+    }
+
+    var buttonContainerEl = document.createElement("div");
+    buttonContainerEl.className = "btn-grid-2"
+    contentHolderEl.appendChild(buttonContainerEl);
+
+    var backButtonEl = document.createElement("button");
+    backButtonEl.className = "btn";
+    backButtonEl.textContent = "Go Back"
+    buttonContainerEl.appendChild(backButtonEl);
+    backButtonEl.addEventListener("click", loadGame)
+
+    var clearScoresButtonEl = document.createElement("button");
+    clearScoresButtonEl.className = "btn";
+    clearScoresButtonEl.textContent = "Clear high scores"
+    buttonContainerEl.appendChild(clearScoresButtonEl);
+    clearScoresButtonEl.addEventListener("click", clearScores)
+}
+
+var clearScores = function () {
+    localStorage.clear();
+    highScores();
 }
 
 loadGame();
+highScoreLinkEl.addEventListener("click", highScores);

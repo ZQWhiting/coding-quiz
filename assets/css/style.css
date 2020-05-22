@@ -42,10 +42,16 @@ main {
     flex: 0 100%;
 }
 
-.btn-grid {
+.btn-grid-1 {
     display: grid;
     gap: 10px;
     margin-top: 10px;
+}
+
+.btn-grid-2 {
+    display: grid;
+    gap: 10px;
+    grid-auto-flow: column;
 }
 
 .btn {
@@ -110,6 +116,7 @@ main {
     background-size: cover;
     flex: 1 100%;
     padding: 5px;
+    margin: 10px 0;
 }
 
 span {
