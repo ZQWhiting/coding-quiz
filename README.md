@@ -24,3 +24,6 @@ This program is run on an HTML webpage. To use this program, simply load the web
 
 ## Author
 This program was developed solely by Z.Q.Whiting based off a prompt provided by the University of Utah online coding bootcamp.
+
+## Tech Used
+HTML, CSS, JavaScript, DOM.
