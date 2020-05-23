@@ -4,8 +4,6 @@ var timeKeeperEl = document.getElementById("time-keeper");
 var contentHolderEl = document.querySelector(".content-holder");
 var highScoreLinkEl = document.querySelector(".h-btn");
 
-var attributeArray = []
-
 var questionArray = [
     {
         question: "Commonly used data types Do NOT include:",
@@ -59,13 +57,38 @@ var questionArray = [
     },
 ];
 
-var createEl = function (name, element, childOf) {
-    name = document.createElement(element);
-    for (let e = 0; e < attributeArray.length; e++) {
-        name.attributeArray[e].a = attributeArray[e].v;
-    }
-    childOf.appendChild(name);
-}
+var startGamePage = function () {
+    contentHolderEl.innerHTML = "";
+    contentHolderEl.id = "center"
+
+    timeKeeperEl.textContent = timeCounter;
+
+    var titleEl = document.createElement("div");
+    titleEl.className = "bold-text";
+    titleEl.textContent = "Coding Quiz Challenge";
+    contentHolderEl.appendChild(titleEl);
+
+    var instructionsEl = document.createElement("div");
+    instructionsEl.className = "default-text";
+    instructionsEl.innerHTML = "Try to answer the following code-related questions within the time limit. <br> Keep in mind that incorrect answers will penalize your score/time by ten seconds!"
+    contentHolderEl.appendChild(instructionsEl);
+
+    var startButtonEl = document.createElement("button");
+    startButtonEl.className = "btn";
+    startButtonEl.textContent = "Start Quiz";
+    contentHolderEl.appendChild(startButtonEl);
+
+    startButtonEl.addEventListener("click", startQuiz);
+};
+
+var startQuiz = function () {
+    contentHolderEl.removeAttribute("id");
+
+    questionCounter = 0;
+
+    keepTime();
+    newQuestionPage();
+};
 
 var keepTime = function () {
 
@@ -92,45 +115,7 @@ var keepTime = function () {
     }, 1000);
 }
 
-var startGamePage = function () {
-
-    timeKeeperEl.textContent = timeCounter;
-
-    contentHolderEl.innerHTML = "";
-    contentHolderEl.id = "center"
-
-    var titleEl = document.createElement("div");
-    titleEl.className = "bold-text";
-    titleEl.textContent = "Coding Quiz Challenge";
-
-    contentHolderEl.appendChild(titleEl);
-
-    var instructionsEl = document.createElement("div");
-    instructionsEl.className = "default-text";
-    instructionsEl.innerHTML = "Try to answer the following code-related questions within the time limit. <br> Keep in mind that incorrect answers will penalize your score/time by ten seconds!"
-
-    contentHolderEl.appendChild(instructionsEl);
-
-    var startButtonEl = document.createElement("button");
-    startButtonEl.className = "btn";
-    startButtonEl.textContent = "Start Quiz";
-    startButtonEl.addEventListener("click", startQuiz);
-
-    contentHolderEl.appendChild(startButtonEl);
-};
-
-var startQuiz = function () {
-    keepTime();
-
-    contentHolderEl.removeAttribute("id");
-
-    questionCounter = 0;
-
-    newQuestion();
-};
-
-var newQuestion = function () {
-
+var newQuestionPage = function () {
     contentHolderEl.innerHTML = "";
 
     var i = questionCounter;
@@ -140,41 +125,33 @@ var newQuestion = function () {
     questionEL.innerHTML = questionArray[i].question;
     contentHolderEl.appendChild(questionEL);
 
-    var answerContainerEl = document.createElement("div");
-    answerContainerEl.className = "answer-container"
-    contentHolderEl.appendChild(answerContainerEl);
+    var btnHolderEl = document.createElement("div");
+    btnHolderEl.className = "answer-btn-container";
+    contentHolderEl.appendChild(btnHolderEl);
 
-    var btnGrid = document.createElement("div");
-    btnGrid.className = "btn-grid-1";
-    contentHolderEl.appendChild(btnGrid);
+    for (var x = 0; x < questionArray[i].answerOptions.length; x++) {
 
-    for (let x = 0; x < questionArray[i].answerOptions.length; x++) {
-        var answerBtn = document.createElement("button");
-        answerBtn.className = "btn";
-        answerBtn.value = questionArray[i].answerOptions[x];
-        answerBtn.textContent = questionArray[i].answerOptions[x];
-        btnGrid.appendChild(answerBtn);
+        var answerBtnEl = document.createElement("button");
+        answerBtnEl.className = "btn";
+        answerBtnEl.value = questionArray[i].answerOptions[x];
+        answerBtnEl.textContent = questionArray[i].answerOptions[x];
+        btnHolderEl.appendChild(answerBtnEl);
     }
-    btnGrid.addEventListener("click", checkAnswer);
+
+    btnHolderEl.addEventListener("click", checkAnswer);
 };
 
 var checkAnswer = function (event) {
-
     var i = questionCounter;
 
     if (!event.target.closest(".btn")) {
+
         return;
-    }
-    else if (event.target.closest(".btn") && event.target.value === questionArray[i].correctAnswer) {
 
-        questionCounter++;
+    } else if (event.target.closest(".btn") &&
+        event.target.value === questionArray[i].correctAnswer) {
 
-        if (questionCounter < questionArray.length) {
-            newQuestion();
-        }
-        else {
-            endGamePage();
-        }
+        checkQuestionCounter();
 
         var correct = document.createElement("div");
         correct.className = "torf-text";
@@ -186,20 +163,23 @@ var checkAnswer = function (event) {
         timeCounter = timeCounter - 10;
         timeKeeperEl.textContent = timeCounter;
 
-        questionCounter++;
-
-        if (questionCounter < questionArray.length) {
-            newQuestion();
-        }
-        else {
-            endGamePage();
-        }
+        checkQuestionCounter();
 
         var wrong = document.createElement("div");
         wrong.className = "torf-text";
         wrong.textContent = "Wrong!"
         contentHolderEl.appendChild(wrong);
     };
+}
+
+var checkQuestionCounter = function () {
+    questionCounter++;
+    if (questionCounter < questionArray.length) {
+        newQuestionPage();
+    }
+    else {
+        endGamePage();
+    }
 }
 
 var endGamePage = function () {
@@ -254,8 +234,8 @@ var saveScore = function (event) {
 
     var savedScores = localStorage.getItem("highscores");
     savedScores = JSON.parse(savedScores) || [];
-
     savedScores.push(newScore);
+
     savedScores.sort(function compareNumbers(a, b) {
         return b.score - a.score;
     });
@@ -282,7 +262,7 @@ var highScoresPage = function () {
     savedScores = JSON.parse(savedScores) || "No high scores yet!";
 
     if (!(savedScores === "No high scores yet!")) {
-        for (let i = 0; i < savedScores.length; i++) {
+        for (var i = 0; i < savedScores.length; i++) {
             var highScoreEl = document.createElement("div");
             highScoreEl.textContent = (i + 1) + ". " + savedScores[i].name + " - " + savedScores[i].score;
             highScoreListEl.appendChild(highScoreEl);
@@ -295,19 +275,20 @@ var highScoresPage = function () {
     }
 
     var buttonContainerEl = document.createElement("div");
-    buttonContainerEl.className = "btn-grid-2"
+    buttonContainerEl.className = "endgame-btn-container"
     contentHolderEl.appendChild(buttonContainerEl);
 
     var backButtonEl = document.createElement("button");
     backButtonEl.className = "btn";
     backButtonEl.textContent = "Go Back"
     buttonContainerEl.appendChild(backButtonEl);
-    backButtonEl.addEventListener("click", startGamePage)
 
     var clearScoresButtonEl = document.createElement("button");
     clearScoresButtonEl.className = "btn";
     clearScoresButtonEl.textContent = "Clear high scores"
     buttonContainerEl.appendChild(clearScoresButtonEl);
+
+    backButtonEl.addEventListener("click", startGamePage)
     clearScoresButtonEl.addEventListener("click", clearScores)
 }
 

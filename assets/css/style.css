@@ -40,17 +40,13 @@ main {
     margin: 15px 10px 25px;
 }
 
-.answer-container {
-    flex: 0 100%;
-}
-
-.btn-grid-1 {
+.answer-btn-container {
     display: grid;
     gap: 10px;
     margin-top: 10px;
 }
 
-.btn-grid-2 {
+.endgame-btn-container {
     display: grid;
     gap: 10px;
     grid-auto-flow: column;
