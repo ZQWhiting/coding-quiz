@@ -4,6 +4,7 @@ var timeKeeperEl = document.getElementById("time-keeper");
 var contentHolderEl = document.querySelector(".content-holder");
 var highScoreLinkEl = document.querySelector(".h-btn");
 
+// Questions, answerOptions, and correctAnswers
 var questionArray = [
     {
         question: "Commonly used data types Do NOT include:",
@@ -57,6 +58,7 @@ var questionArray = [
     },
 ];
 
+// Creates new element with chosen attributes
 var createEl = function (elName, element, childOf, elClass, elText, elHtml, elValue, elType, elNameVal) {
     elName = document.createElement(element);
     elName.className = elClass;
@@ -69,6 +71,7 @@ var createEl = function (elName, element, childOf, elClass, elText, elHtml, elVa
     return elName;
 }
 
+// HTML DOM welcome page
 var startGamePage = function () {
     contentHolderEl.innerHTML = "";
     contentHolderEl.id = "center";
@@ -85,15 +88,17 @@ var startGamePage = function () {
     startButtonEl.addEventListener("click", startQuiz);
 };
 
+// Sets up the quiz
 var startQuiz = function () {
-    contentHolderEl.removeAttribute("id");
+    contentHolderEl.removeAttribute("id"); // removes css centering
 
-    questionCounter = 0;
+    questionCounter = 0; // keeps track of question in questionArray // reset question counter
 
-    keepTime();
-    newQuestionPage();
+    keepTime(); // timer function
+    newQuestionPage(); // loads new question
 };
 
+// Timer function
 var keepTime = function () {
 
     timeCounter = 75; // starting time
@@ -104,13 +109,14 @@ var keepTime = function () {
         timeCounter--; // countdown
         timeKeeperEl.textContent = timeCounter; // display countdown
 
-        if (timeCounter <= 0) { // IF time reaches 0 or less than 0
+        if (timeCounter <= 0) { // IF time reaches 0 or below
 
             clearInterval(countDown); // stop counter
             timeCounter = 0; // if counter is below 0, set to 0
+            timeKeeperEl.textContent = timeCounter; // refresh time display
             endGamePage(); // end game
 
-        } else if (document.querySelector("form") || document.querySelector(".hs-container")) { // IF the program reaches a page with a form or a highscore container, or in other words, IF the game has ended
+        } else if (document.querySelector("form") || document.querySelector(".hs-container")) { // IF the program reaches a page function with a form or a highscore container, or in other words, IF the game has ended
 
             clearInterval(countDown); // stop counter
             timeCounter++ // because countdown ticks once after game has ended, undo last countdown
@@ -119,6 +125,7 @@ var keepTime = function () {
     }, 1000);
 }
 
+// HTML DOM question page (loop: newQuestionPage, checkAnswer, checkQuestionCounter, newQuestionPage)
 var newQuestionPage = function () {
     contentHolderEl.innerHTML = "";
 
@@ -136,38 +143,43 @@ var newQuestionPage = function () {
     btnHolderEl.addEventListener("click", checkAnswer);
 };
 
+// Checks to see if answer is right or wrong
 var checkAnswer = function (event) {
     var i = questionCounter;
 
-    if (!event.target.closest(".btn")) {
-        return;
+    if (!event.target.closest(".btn")) { // IF target is not a button
+        return; // return and don't do anything
 
-    } else if (event.target.closest(".btn") &&
-        event.target.textContent === questionArray[i].correctAnswer) {
+    } else if (event.target.closest(".btn") && // IF target is a button
+        event.target.textContent === questionArray[i].correctAnswer) { // AND it is the correct answer
 
-        checkQuestionCounter();
-        var correctEl = createEl(correctEl, "div", contentHolderEl, "torf-text", "Correct!")
+        checkQuestionCounter(); // load new question or end game
 
-    } else {
+        var correctEl = createEl(correctEl, "div", contentHolderEl, "answer-text", "Correct!") // and append "Correct!"
 
-        timeCounter = timeCounter - 10;
-        timeKeeperEl.textContent = timeCounter;
+    } else { // IF target is not the correct answer
 
-        checkQuestionCounter();
-        var wrongEl = createEl(wrongEl, "div", contentHolderEl, "torf-text", "Wrong!")
+        timeCounter = timeCounter - 10; // 10 second penalty
+        timeKeeperEl.textContent = timeCounter; // refresh time display
+
+        checkQuestionCounter(); // load new question or end game
+
+        var wrongEl = createEl(wrongEl, "div", contentHolderEl, "answer-text", "Wrong!") // and append "Wrong!"
     };
 }
 
+// Checks to see if there are more questions to be loaded
 var checkQuestionCounter = function () {
-    questionCounter++;
-    if (questionCounter < questionArray.length) {
-        newQuestionPage();
+    questionCounter++; // count up questionCounter
+    if (questionCounter < questionArray.length) { // IF there are more questions
+        newQuestionPage(); // load new question
     }
     else {
-        endGamePage();
+        endGamePage(); // end game
     }
 }
 
+// HTML DOM end game page
 var endGamePage = function () {
     contentHolderEl.innerHTML = ""
 
@@ -186,54 +198,56 @@ var endGamePage = function () {
     initialFormEl.addEventListener("submit", saveScore);
 }
 
+// Sorts and saves score into local storage as a JSON string
 var saveScore = function (event) {
     event.preventDefault();
 
-    var nameInput = document.querySelector("input[name='task-name']").value;
+    var nameInput = document.querySelector("input[name='task-name']").value; // gets user input
 
-    if (nameInput === "") {
+    if (nameInput === "") { // user input must have a value
         return endGamePage();
     }
 
-    var newScore = {
+    var newScore = { // object to store the name and score of the user
         name: nameInput,
         score: timeCounter
     };
 
-    var savedScores = localStorage.getItem("highscores");
-    savedScores = JSON.parse(savedScores) || [];
-    savedScores.push(newScore);
+    var savedScores = localStorage.getItem("highscores"); // retrieves saved scores from local storage
+    savedScores = JSON.parse(savedScores) || []; // converts JSON string to array, OR IF savedScores is undefined, sets value as an array
+    savedScores.push(newScore); // push new score into the array
 
-    savedScores.sort(function compareNumbers(a, b) {
+    savedScores.sort(function compareNumbers(a, b) { // sorts the array by highest score first
         return b.score - a.score;
     });
 
-    localStorage.setItem("highscores", JSON.stringify(savedScores));
+    localStorage.setItem("highscores", JSON.stringify(savedScores)); // saves the array to local storage
 
-    highScoresPage();
+    highScoresPage(); // loads the high score page
 }
 
+// HTML DOM high score page
 var highScoresPage = function () {
     contentHolderEl.innerHTML = "";
     contentHolderEl.removeAttribute("id");
 
     var scorePageTextEl = createEl(scorePageTextEl, "div", contentHolderEl, "bold-text", "High scores");
 
-    var highScoreListEl = createEl(highScoreListEl, "div", contentHolderEl, "hs-container");
+    var highScoreListEl = createEl(highScoreListEl, "div", contentHolderEl, "hs-container", "");
 
-    var savedScores = localStorage.getItem("highscores");
-    savedScores = JSON.parse(savedScores) || "No high scores yet!";
+    var savedScores = localStorage.getItem("highscores"); // retrieve high scores from local storage
+    savedScores = JSON.parse(savedScores) || "No high scores yet!"; // convert into an array, OR IF undefined, sets value to placeholder text
 
-    if (!(savedScores === "No high scores yet!")) {
-        for (var i = 0; i < savedScores.length; i++) {
+    if (!(savedScores === "No high scores yet!")) { // IF saved scores were not undefined
+        for (var i = 0; i < savedScores.length; i++) { // retrieve each saved score object from the array
 
             var highScoreEl = createEl(highScoreEl, "div", highScoreListEl, "",
-            (i + 1) + ". " + savedScores[i].name + " - " + savedScores[i].score);
+            (i + 1) + ". " + savedScores[i].name + " - " + savedScores[i].score); // and display it
         }
     }
-    else {
+    else { // ELSE saved scores were undefined
 
-        var highScoreEl = createEl(highScoreEl, "div", highScoreListEl, "", savedScores);
+        var highScoreEl = createEl(highScoreEl, "div", highScoreListEl, "", savedScores); // display placeholder text
     }
 
     var buttonContainerEl = createEl(buttonContainerEl, "div", contentHolderEl, "endgame-btn-container", "");
@@ -242,15 +256,16 @@ var highScoresPage = function () {
 
     var clearScoresButtonEl = createEl(clearScoresButtonEl, "div", buttonContainerEl, "btn", "Clear high scores");
 
-    backButtonEl.addEventListener("click", startGamePage)
-    clearScoresButtonEl.addEventListener("click", clearScores)
+    backButtonEl.addEventListener("click", startGamePage) // back button returns user to welcome page
+    clearScoresButtonEl.addEventListener("click", clearScores) // clear scores button runs the clear scores function
 }
 
+// clears local storage
 var clearScores = function () {
     localStorage.clear();
     highScoresPage();
 }
 
-startGamePage();
+startGamePage(); // brings user to the start game page on page load
 
-highScoreLinkEl.addEventListener("click", highScoresPage);
+highScoreLinkEl.addEventListener("click", highScoresPage); // View high scores button brings user to the high scores page
