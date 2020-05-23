@@ -147,10 +147,10 @@ var newQuestionPage = function () {
 var checkAnswer = function (event) {
     var i = questionCounter;
 
-    if (!event.target.closest(".btn")) { // IF target is not a button
+    if (!event.target.matches(".btn")) { // IF target is not a button
         return; // return and don't do anything
 
-    } else if (event.target.closest(".btn") && // IF target is a button
+    } else if (event.target.matches(".btn") && // IF target is a button
         event.target.textContent === questionArray[i].correctAnswer) { // AND it is the correct answer
 
         checkQuestionCounter(); // load new question or end game
