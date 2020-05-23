@@ -26,4 +26,4 @@ This program is run on an HTML webpage. To use this program, simply load the web
 This program was developed solely by Z.Q.Whiting based off a prompt provided by the University of Utah online coding bootcamp.
 
 ## Tech Used
-HTML, CSS, JavaScript, DOM.
+HTML, DOM, WebStorage, CSS, JavaScript. 
