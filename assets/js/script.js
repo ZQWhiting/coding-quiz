@@ -36,7 +36,7 @@ var questionArray = [
         correctAnswer: "All of the above"
     },
     {
-        question: "String values must be enclosed within <span class='span'>___________________</span> when being assigned to variables",
+        question: "String values must be enclosed within <span class='span'>___________________</span> when being assigned to variables.",
         answerOptions: [
             "Curly brackets",
             "Quotes",
@@ -57,26 +57,30 @@ var questionArray = [
     },
 ];
 
+var createEl = function (elName, element, childOf, elClass, elText, elHtml, elValue, elType, elNameVal) {
+    elName = document.createElement(element);
+    elName.className = elClass;
+    elName.textContent = elText || elHtml;
+    elName.innerHTML = elHtml || elText;
+    elName.value = elValue;
+    elName.type = elType;
+    elName.name = elNameVal;
+    childOf.appendChild(elName);
+    return elName;
+}
+
 var startGamePage = function () {
     contentHolderEl.innerHTML = "";
-    contentHolderEl.id = "center"
+    contentHolderEl.id = "center";
 
     timeKeeperEl.textContent = timeCounter;
 
-    var titleEl = document.createElement("div");
-    titleEl.className = "bold-text";
-    titleEl.textContent = "Coding Quiz Challenge";
-    contentHolderEl.appendChild(titleEl);
+    var titleEl = createEl(titleEl, "div", contentHolderEl, "bold-text", "Coding Quiz Challenge");
 
-    var instructionsEl = document.createElement("div");
-    instructionsEl.className = "default-text";
-    instructionsEl.innerHTML = "Try to answer the following code-related questions within the time limit. <br> Keep in mind that incorrect answers will penalize your score/time by ten seconds!"
-    contentHolderEl.appendChild(instructionsEl);
+    var instructionsEl = createEl(instructionsEl, "div", contentHolderEl, "default-text", "",
+    "Try to answer the following code-related questions within the time limit. <br> Keep in mind that incorrect answers will penalize your score/time by ten seconds!");
 
-    var startButtonEl = document.createElement("button");
-    startButtonEl.className = "btn";
-    startButtonEl.textContent = "Start Quiz";
-    contentHolderEl.appendChild(startButtonEl);
+    var startButtonEl = createEl(startButtonEl, "button", contentHolderEl, "btn", "Start Quiz");
 
     startButtonEl.addEventListener("click", startQuiz);
 };
@@ -120,22 +124,13 @@ var newQuestionPage = function () {
 
     var i = questionCounter;
 
-    var questionEL = document.createElement("div");
-    questionEL.className = "bold-text";
-    questionEL.innerHTML = questionArray[i].question;
-    contentHolderEl.appendChild(questionEL);
+    var questionEL = createEl(questionEL, "div", contentHolderEl, "bold-text", "", questionArray[i].question);
 
-    var btnHolderEl = document.createElement("div");
-    btnHolderEl.className = "answer-btn-container";
-    contentHolderEl.appendChild(btnHolderEl);
+    var btnHolderEl = createEl(btnHolderEl, "div", contentHolderEl, "answer-btn-container", "");
 
     for (var x = 0; x < questionArray[i].answerOptions.length; x++) {
 
-        var answerBtnEl = document.createElement("button");
-        answerBtnEl.className = "btn";
-        answerBtnEl.value = questionArray[i].answerOptions[x];
-        answerBtnEl.textContent = questionArray[i].answerOptions[x];
-        btnHolderEl.appendChild(answerBtnEl);
+        var answerBtnEl = createEl(answerBtnEl, "button", btnHolderEl, "btn", questionArray[i].answerOptions[x]);
     }
 
     btnHolderEl.addEventListener("click", checkAnswer);
@@ -145,18 +140,13 @@ var checkAnswer = function (event) {
     var i = questionCounter;
 
     if (!event.target.closest(".btn")) {
-
         return;
 
     } else if (event.target.closest(".btn") &&
-        event.target.value === questionArray[i].correctAnswer) {
+        event.target.textContent === questionArray[i].correctAnswer) {
 
         checkQuestionCounter();
-
-        var correct = document.createElement("div");
-        correct.className = "torf-text";
-        correct.textContent = "Correct!"
-        contentHolderEl.appendChild(correct);
+        var correctEl = createEl(correctEl, "div", contentHolderEl, "torf-text", "Correct!")
 
     } else {
 
@@ -164,11 +154,7 @@ var checkAnswer = function (event) {
         timeKeeperEl.textContent = timeCounter;
 
         checkQuestionCounter();
-
-        var wrong = document.createElement("div");
-        wrong.className = "torf-text";
-        wrong.textContent = "Wrong!"
-        contentHolderEl.appendChild(wrong);
+        var wrongEl = createEl(wrongEl, "div", contentHolderEl, "torf-text", "Wrong!")
     };
 }
 
@@ -185,37 +171,19 @@ var checkQuestionCounter = function () {
 var endGamePage = function () {
     contentHolderEl.innerHTML = ""
 
-    var doneEl = document.createElement("div");
-    doneEl.className = "bold-text";
-    doneEl.textContent = "Coding Quiz Challenge";
-    contentHolderEl.appendChild(doneEl);
+    var titleEl = createEl(titleEl, "div", contentHolderEl, "bold-text", "Coding Quiz Challenge");
 
-    var scoreTextEl = document.createElement("div");
-    scoreTextEl.className = "hs-text";
-    scoreTextEl.textContent = "Your final score is " + timeCounter + ".";
-    contentHolderEl.appendChild(scoreTextEl);
+    var scoreTextEl = createEl(scoreTextEl, "div", contentHolderEl, "hs-text", "Your final score is " + timeCounter + ".");
 
-    var scoreTextEl = document.createElement("div");
-    scoreTextEl.className = "hs-text";
-    scoreTextEl.textContent = "Enter initials: ";
-    contentHolderEl.appendChild(scoreTextEl);
+    var initialTextEl = createEl(initialTextEl, "div", contentHolderEl, "hs-text", "Enter initials: ");
 
-    var formEl = document.createElement("form");
-    formEl.className = "hs-form";
-    scoreTextEl.appendChild(formEl);
+    var initialFormEl = createEl(initialFormEl, "form", initialTextEl, "hs-form", "");
 
-    var inputTextEl = document.createElement("input");
-    inputTextEl.type = "text";
-    inputTextEl.name = "task-name";
-    formEl.appendChild(inputTextEl);
+    var inputTextEl = createEl(inputTextEl, "input", initialFormEl, "", "", "", "", "text", "task-name");
 
-    var inputSubmitEl = document.createElement("input");
-    inputSubmitEl.type = "submit";
-    inputSubmitEl.className = "btn";
-    inputSubmitEl.value = "Submit";
-    formEl.appendChild(inputSubmitEl);
+    var inputSubmitEl = createEl(inputSubmitEl, "input", initialFormEl, "btn", "", "", "Submit", "submit");
 
-    formEl.addEventListener("submit", saveScore);
+    initialFormEl.addEventListener("submit", saveScore);
 }
 
 var saveScore = function (event) {
@@ -249,44 +217,30 @@ var highScoresPage = function () {
     contentHolderEl.innerHTML = "";
     contentHolderEl.removeAttribute("id");
 
-    var scorePageText = document.createElement("div");
-    scorePageText.className = "bold-text";
-    scorePageText.textContent = "High scores"
-    contentHolderEl.appendChild(scorePageText);
+    var scorePageTextEl = createEl(scorePageTextEl, "div", contentHolderEl, "bold-text", "High scores");
 
-    var highScoreListEl = document.createElement("div");
-    highScoreListEl.className = "hs-container";
-    contentHolderEl.appendChild(highScoreListEl);
+    var highScoreListEl = createEl(highScoreListEl, "div", contentHolderEl, "hs-container");
 
     var savedScores = localStorage.getItem("highscores");
     savedScores = JSON.parse(savedScores) || "No high scores yet!";
 
     if (!(savedScores === "No high scores yet!")) {
         for (var i = 0; i < savedScores.length; i++) {
-            var highScoreEl = document.createElement("div");
-            highScoreEl.textContent = (i + 1) + ". " + savedScores[i].name + " - " + savedScores[i].score;
-            highScoreListEl.appendChild(highScoreEl);
+
+            var highScoreEl = createEl(highScoreEl, "div", highScoreListEl, "",
+            (i + 1) + ". " + savedScores[i].name + " - " + savedScores[i].score);
         }
     }
     else {
-        var highScoreEl = document.createElement("div");
-        highScoreEl.textContent = savedScores;
-        highScoreListEl.appendChild(highScoreEl);
+
+        var highScoreEl = createEl(highScoreEl, "div", highScoreListEl, "", savedScores);
     }
 
-    var buttonContainerEl = document.createElement("div");
-    buttonContainerEl.className = "endgame-btn-container"
-    contentHolderEl.appendChild(buttonContainerEl);
+    var buttonContainerEl = createEl(buttonContainerEl, "div", contentHolderEl, "endgame-btn-container", "");
 
-    var backButtonEl = document.createElement("button");
-    backButtonEl.className = "btn";
-    backButtonEl.textContent = "Go Back"
-    buttonContainerEl.appendChild(backButtonEl);
+    var backButtonEl = createEl(backButtonEl, "div", buttonContainerEl, "btn", "Go Back");
 
-    var clearScoresButtonEl = document.createElement("button");
-    clearScoresButtonEl.className = "btn";
-    clearScoresButtonEl.textContent = "Clear high scores"
-    buttonContainerEl.appendChild(clearScoresButtonEl);
+    var clearScoresButtonEl = createEl(clearScoresButtonEl, "div", buttonContainerEl, "btn", "Clear high scores");
 
     backButtonEl.addEventListener("click", startGamePage)
     clearScoresButtonEl.addEventListener("click", clearScores)
