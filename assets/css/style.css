@@ -40,17 +40,13 @@ main {
     margin: 15px 10px 25px;
 }
 
-.answer-container {
-    flex: 0 100%;
-}
-
-.btn-grid-1 {
+.answer-btn-container {
     display: grid;
     gap: 10px;
     margin-top: 10px;
 }
 
-.btn-grid-2 {
+.endgame-btn-container {
     display: grid;
     gap: 10px;
     grid-auto-flow: column;
@@ -76,7 +72,7 @@ main {
     display: inline;
 }
 
-.torf-text {
+.answer-text {
     border-top: solid 1px grey;
     color: grey;
     padding: 7px 15px;
@@ -128,4 +124,24 @@ main {
 
 .btn:hover {
     background-color: violet;
+}
+
+@media (max-width: 768px) {
+    * {
+        font-size: 4vw;
+    }
+
+    .content-holder {
+        flex: 0 90%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .bold-text {
+        font-size: 7vw;
+    }
+
+    .answer-text {
+        font-size: 6vw;
+    }
 }
