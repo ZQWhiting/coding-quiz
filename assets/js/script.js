@@ -1,8 +1,10 @@
 var timeCounter = 0;
 var questionCounter = 0;
-var timeKeeper = document.getElementById("time-keeper");
+var timeKeeperEl = document.getElementById("time-keeper");
 var contentHolderEl = document.querySelector(".content-holder");
 var highScoreLinkEl = document.querySelector(".h-btn");
+
+var attributeArray = []
 
 var questionArray = [
     {
@@ -57,62 +59,85 @@ var questionArray = [
     },
 ];
 
+var createEl = function (name, element, childOf) {
+    name = document.createElement(element);
+    for (let e = 0; e < attributeArray.length; e++) {
+        name.attributeArray[e].a = attributeArray[e].v;
+    }
+    childOf.appendChild(name);
+}
+
 var keepTime = function () {
-    timeCounter = 75;
-    timeKeeper.textContent = timeCounter;
-    var countDown = setInterval(function () {
-        timeCounter--;
-        timeKeeper.textContent = timeCounter;
-        if (timeCounter <= 0) {
-            clearInterval(countDown);
-            timeCounter = 0;
-            endGamePage();
-        }
-        else if (document.querySelector("form") || document.querySelector(".hs-container")) {
-            clearInterval(countDown);
-            timeCounter++
-            timeKeeper.textContent = timeCounter;
+
+    timeCounter = 75; // starting time
+    timeKeeperEl.textContent = timeCounter; // display time
+
+    var countDown = setInterval(function () { // timer
+
+        timeCounter--; // countdown
+        timeKeeperEl.textContent = timeCounter; // display countdown
+
+        if (timeCounter <= 0) { // IF time reaches 0 or less than 0
+
+            clearInterval(countDown); // stop counter
+            timeCounter = 0; // if counter is below 0, set to 0
+            endGamePage(); // end game
+
+        } else if (document.querySelector("form") || document.querySelector(".hs-container")) { // IF the program reaches a page with a form or a highscore container, or in other words, IF the game has ended
+
+            clearInterval(countDown); // stop counter
+            timeCounter++ // because countdown ticks once after game has ended, undo last countdown
+            timeKeeperEl.textContent = timeCounter; // display ending time
         }
     }, 1000);
 }
 
 var startGamePage = function () {
-    contentHolderEl.innerHTML = "";
-    timeKeeper.textContent = timeCounter;
 
+    timeKeeperEl.textContent = timeCounter;
+
+    contentHolderEl.innerHTML = "";
     contentHolderEl.id = "center"
 
     var titleEl = document.createElement("div");
     titleEl.className = "bold-text";
     titleEl.textContent = "Coding Quiz Challenge";
+
     contentHolderEl.appendChild(titleEl);
 
-    var instructEl = document.createElement("div");
-    instructEl.className = "default-text";
-    instructEl.innerHTML = "Try to answer the following code-related questions within the time limit. <br> Keep in mind that incorrect answers will penalize your score/time by ten seconds!"
-    contentHolderEl.appendChild(instructEl);
+    var instructionsEl = document.createElement("div");
+    instructionsEl.className = "default-text";
+    instructionsEl.innerHTML = "Try to answer the following code-related questions within the time limit. <br> Keep in mind that incorrect answers will penalize your score/time by ten seconds!"
+
+    contentHolderEl.appendChild(instructionsEl);
 
     var startButtonEl = document.createElement("button");
     startButtonEl.className = "btn";
     startButtonEl.textContent = "Start Quiz";
     startButtonEl.addEventListener("click", startQuiz);
+
     contentHolderEl.appendChild(startButtonEl);
 };
 
 var startQuiz = function () {
     keepTime();
+
     contentHolderEl.removeAttribute("id");
+
     questionCounter = 0;
-    questionLoop();
+
+    newQuestion();
 };
 
-var questionLoop = function () {
-    var i = questionCounter;
+var newQuestion = function () {
+
     contentHolderEl.innerHTML = "";
 
+    var i = questionCounter;
+
     var questionEL = document.createElement("div");
-    questionEL.innerHTML = questionArray[i].question;
     questionEL.className = "bold-text";
+    questionEL.innerHTML = questionArray[i].question;
     contentHolderEl.appendChild(questionEL);
 
     var answerContainerEl = document.createElement("div");
@@ -126,46 +151,53 @@ var questionLoop = function () {
     for (let x = 0; x < questionArray[i].answerOptions.length; x++) {
         var answerBtn = document.createElement("button");
         answerBtn.className = "btn";
-        answerBtn.setAttribute("value", questionArray[i].answerOptions[x]);
+        answerBtn.value = questionArray[i].answerOptions[x];
         answerBtn.textContent = questionArray[i].answerOptions[x];
         btnGrid.appendChild(answerBtn);
     }
     btnGrid.addEventListener("click", checkAnswer);
-
-
 };
 
 var checkAnswer = function (event) {
+
     var i = questionCounter;
-    if (!event.target.closest(".btn")){
+
+    if (!event.target.closest(".btn")) {
         return;
     }
-    else if (event.target.closest(".btn") && event.target.getAttribute("value") === questionArray[i].correctAnswer) {
+    else if (event.target.closest(".btn") && event.target.value === questionArray[i].correctAnswer) {
+
+        questionCounter++;
+
+        if (questionCounter < questionArray.length) {
+            newQuestion();
+        }
+        else {
+            endGamePage();
+        }
+
         var correct = document.createElement("div");
         correct.className = "torf-text";
         correct.textContent = "Correct!"
+        contentHolderEl.appendChild(correct);
+
+    } else {
+
+        timeCounter = timeCounter - 10;
+        timeKeeperEl.textContent = timeCounter;
+
         questionCounter++;
+
         if (questionCounter < questionArray.length) {
-            questionLoop();
+            newQuestion();
         }
         else {
             endGamePage();
         }
-        contentHolderEl.appendChild(correct);
-    }
-    else {
+
         var wrong = document.createElement("div");
         wrong.className = "torf-text";
         wrong.textContent = "Wrong!"
-        timeCounter = timeCounter - 10;
-        timeKeeper.textContent = timeCounter;
-        questionCounter++;
-        if (questionCounter < questionArray.length) {
-            questionLoop();
-        }
-        else {
-            endGamePage();
-        }
         contentHolderEl.appendChild(wrong);
     };
 }
@@ -200,7 +232,7 @@ var endGamePage = function () {
     var inputSubmitEl = document.createElement("input");
     inputSubmitEl.type = "submit";
     inputSubmitEl.className = "btn";
-    inputSubmitEl.setAttribute("value", "Submit");
+    inputSubmitEl.value = "Submit";
     formEl.appendChild(inputSubmitEl);
 
     formEl.addEventListener("submit", saveScore);
@@ -211,17 +243,17 @@ var saveScore = function (event) {
 
     var nameInput = document.querySelector("input[name='task-name']").value;
 
-    if (!nameInput) {
-        endGamePage();
+    if (nameInput === "") {
+        return endGamePage();
     }
-
-    var savedScores = localStorage.getItem("highscoresPage");
-    savedScores = JSON.parse(savedScores) || [];
 
     var newScore = {
         name: nameInput,
         score: timeCounter
     };
+
+    var savedScores = localStorage.getItem("highscores");
+    savedScores = JSON.parse(savedScores) || [];
 
     savedScores.push(newScore);
     savedScores.sort(function compareNumbers(a, b) {
@@ -229,6 +261,7 @@ var saveScore = function (event) {
     });
 
     localStorage.setItem("highscores", JSON.stringify(savedScores));
+
     highScoresPage();
 }
 
@@ -246,20 +279,19 @@ var highScoresPage = function () {
     contentHolderEl.appendChild(highScoreListEl);
 
     var savedScores = localStorage.getItem("highscores");
-    savedScores = JSON.parse(savedScores);
-    savedScores = savedScores || "No high scores yet!";
+    savedScores = JSON.parse(savedScores) || "No high scores yet!";
 
     if (!(savedScores === "No high scores yet!")) {
         for (let i = 0; i < savedScores.length; i++) {
             var highScoreEl = document.createElement("div");
-            highScoreEl.innerHTML = (i + 1) + ". " + savedScores[i].name + " - " + savedScores[i].score;
+            highScoreEl.textContent = (i + 1) + ". " + savedScores[i].name + " - " + savedScores[i].score;
             highScoreListEl.appendChild(highScoreEl);
         }
     }
     else {
         var highScoreEl = document.createElement("div");
-            highScoreEl.innerHTML = savedScores;
-            highScoreListEl.appendChild(highScoreEl);
+        highScoreEl.textContent = savedScores;
+        highScoreListEl.appendChild(highScoreEl);
     }
 
     var buttonContainerEl = document.createElement("div");
